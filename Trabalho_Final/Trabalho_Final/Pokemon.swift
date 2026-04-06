@@ -18,10 +18,14 @@ struct Pokemon: Identifiable {
 
 //Estrutura para fazer decode ao JSON da API
 
+
+//Resposta inteira da API
 struct PokemonListResponse: Decodable {
     let results: [PokemonResult]
 }
-	
+
+
+//Representa um Pokemon individual
 struct PokemonResult: Decodable {
     let name: String
 }

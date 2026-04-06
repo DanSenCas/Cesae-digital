@@ -10,31 +10,34 @@ import SwiftUI
 struct PokemonListView: View {
     
     //Usar umas lista temporaria de pokemons
-    let AllPokemon = ["Bulbasaur", "Charmander", "Squirtle", "Pikachu", "Eevee"]
+    //let AllPokemon = ["Bulbasaur", "Charmander", "Squirtle", "Pikachu", "Eevee"]
+    
+    @State private var ViewModel = PokemonViewModel()
     
     //Texto que o utilizador tem que colocar
     @State private var searchText = ""
     
     //Filtro da lista - Atualiza sempre que a variavel searchText muda
     
-    var filteredPokemon: [String]{
+    var filteredPokemon: [Pokemon] {
         if searchText.isEmpty {
-            return AllPokemon
+            return ViewModel.AllPokemon
         }else {
-            return AllPokemon.filter{ $0.localizedCaseInsensitiveContains(searchText) }
+            return ViewModel.AllPokemon.filter{ $0.name.localizedCaseInsensitiveContains(searchText) }
         }
     }
     
     var body: some View {        
         NavigationStack{
-            List (filteredPokemon, id: \.self) {
+            List (filteredPokemon) {
                 pokemon in
-                Text(pokemon)
+                Text(pokemon.name)
             }
             .searchable(text: $searchText, prompt: "Procurar Pokemon")
             .navigationTitle("Pokedex")
-            
+            .task { // task para fazer correr um codigo quando a view aparecer
+                await ViewModel.buscarPokemonAPI()
+            }
         }
     }
-
 }
