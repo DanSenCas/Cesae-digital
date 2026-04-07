@@ -31,7 +31,9 @@ struct PokemonListView: View {
         NavigationStack{
             List (filteredPokemon) {
                 pokemon in
-                Text(pokemon.name)
+                NavigationLink(destination: PokemonDetailView(pokemon: pokemon)){
+                    Text(pokemon.name)
+                }
             }
             .searchable(text: $searchText, prompt: "Procurar Pokemon")
             .navigationTitle("Pokedex")
