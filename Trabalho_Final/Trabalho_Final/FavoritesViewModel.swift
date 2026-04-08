@@ -10,18 +10,36 @@ import Foundation
 @Observable
 class FavoritesViewModel {
     
-    var favoritePokemon: [String] = []
+    var favoritePokemon: [Pokemon] = []
     
-    func adicionarFavorito(name: String){
-        
+    init() {
+        if let guardados = UserDefaults.standard.stringArray(forKey: "favoritos") {
+            favoritePokemon = guardados.map { Pokemon(name: $0) }
+        }
     }
     
-    func removerFavorito(name: String){
-        
+    func adicionarFavorito(pokemon: Pokemon){
+        if !favoritePokemon.contains(where: { $0.name == pokemon.name }) {
+            favoritePokemon.append(pokemon)
+        }
+        UserDefaults.standard.set(favoritePokemon.map { $0.name }, forKey: "favoritos")
     }
     
-    func verificarFavorito(name: String) -> Bool{
-        
+    func removerFavorito(pokemon: Pokemon){
+        favoritePokemon.removeAll { $0.name == pokemon.name }
+        UserDefaults.standard.set(favoritePokemon.map { $0.name }, forKey: "favoritos")
     }
     
+    func verificarFavorito(pokemon: Pokemon) -> Bool{
+        return favoritePokemon.contains { $0.name == pokemon.name }
+    }
+    
+    func toggleFavorito(pokemon: Pokemon) {
+        if verificarFavorito(pokemon: pokemon) {
+            removerFavorito(pokemon: pokemon)
+        } else {
+            adicionarFavorito(pokemon: pokemon)
+        }
+    }
 }
+

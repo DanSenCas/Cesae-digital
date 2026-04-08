@@ -8,17 +8,25 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @State var favoritesVM = FavoritesViewModel()
+    @State var teamVM = TeamViewModel()
+    
     var body: some View {
         
         TabView {
-            PokemonListView()
+            PokemonListView(favoritesVM: favoritesVM)
                 .tabItem {
                     Label("Pokédex", systemImage: "list.bullet")
                 }
             
-            FavoritesView()
+            FavoritesView(favoriteVM: favoritesVM)
                 .tabItem {
                     Label("Favoritos", systemImage: "star.fill")
+                }
+            TeamListView(teamVM:teamVM)
+                .tabItem {
+                    Label("Teams", systemImage: "person.3.fill")
                 }
         }
     }

@@ -10,12 +10,22 @@ import SwiftUI
 struct PokemonDetailView: View {
     
     @State private var ViewModel = PokemonDetailViewModel()
+    @Bindable var favoriteVM: FavoritesViewModel
+
     
     let pokemon: Pokemon
     
     var body: some View {
         VStack{
             if let detalhe = ViewModel.detalhe {
+                
+                Button {
+                    favoriteVM.toggleFavorito(pokemon: pokemon)
+                } label: {
+                    Image(systemName: favoriteVM.verificarFavorito(pokemon: pokemon) ? "heart.fill" : "heart")
+                        .foregroundColor(.red)
+                }
+                
                 AsyncImage(url: URL(string: detalhe.sprites.other.officialArtwork.front_default)) { image in
                     image
                         .resizable()
@@ -24,7 +34,9 @@ struct PokemonDetailView: View {
                 } placeholder: {
                     ProgressView()
                 }
+                
                 Text(detalhe.name)
+                
                 HStack {
                     ForEach(detalhe.types, id: \.type.name) { entrada in
                         Text(entrada.type.name)

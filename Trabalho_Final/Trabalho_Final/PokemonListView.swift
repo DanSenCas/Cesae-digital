@@ -14,6 +14,8 @@ struct PokemonListView: View {
     
     @State private var ViewModel = PokemonViewModel()
     
+    @Bindable var favoritesVM: FavoritesViewModel
+    
     //Texto que o utilizador tem que colocar
     @State private var searchText = ""
     
@@ -31,8 +33,19 @@ struct PokemonListView: View {
         NavigationStack{
             List (filteredPokemon) {
                 pokemon in
-                NavigationLink(destination: PokemonDetailView(pokemon: pokemon)){
+                NavigationLink(destination: PokemonDetailView(favoriteVM: favoritesVM, pokemon: pokemon)){
                     Text(pokemon.name)
+                }
+                .swipeActions {
+                    Button {
+                        favoritesVM.toggleFavorito(pokemon: pokemon)
+                    } label: {
+                        Label(
+                            favoritesVM.verificarFavorito(pokemon: pokemon) ? "Remover" : "Adicionar",
+                            systemImage: favoritesVM.verificarFavorito(pokemon: pokemon) ? "heart.fill" : "heart"
+                        )
+                    }
+                    .tint(favoritesVM.verificarFavorito(pokemon: pokemon) ? .red : .green)
                 }
             }
             .searchable(text: $searchText, prompt: "Procurar Pokemon")

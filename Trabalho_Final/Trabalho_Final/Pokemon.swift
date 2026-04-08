@@ -27,6 +27,15 @@ struct PokemonDetail: Decodable{
     let types: [PokemonTypeResponse]
 }
 
+//Equipa Pokemon
+struct PokemonTeam: Identifiable, Codable{
+    
+    let id = UUID()
+    let name: String
+    let team: [String]
+}
+
+
 //Estrutura para fazer decode ao JSON da API
 
 //Struct para o sprite da immagem
