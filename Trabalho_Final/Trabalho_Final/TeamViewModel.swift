@@ -10,17 +10,18 @@ import Foundation
 @Observable
 class TeamViewModel {
     
+    // Lista de equipas
     var pokemonTeam: [PokemonTeam] = []
     
+    // Carrega equipas guardadas
     init() {
         if let data = UserDefaults.standard.data(forKey: "equipas"),
            let guardadas = try? JSONDecoder().decode([PokemonTeam].self, from: data) {
             pokemonTeam = guardadas
         }
-    
     }
     
-    //Adicionar membro de equipa
+    // Adiciona e guarda localmente
     func adicionarEquipa(pokemon: PokemonTeam){
         if !pokemonTeam.contains(where: { $0.name == pokemon.name }) {
             pokemonTeam.append(pokemon)
@@ -30,12 +31,11 @@ class TeamViewModel {
         }
     }
     
-    //Remover membro de equipa
+    // Remove e atualiza localmente
     func removerEquipa(pokemon: PokemonTeam){
         pokemonTeam.removeAll { $0.name == pokemon.name }
         if let data = try? JSONEncoder().encode(pokemonTeam) {
             UserDefaults.standard.set(data, forKey: "equipas")
         }
     }
-    
 }

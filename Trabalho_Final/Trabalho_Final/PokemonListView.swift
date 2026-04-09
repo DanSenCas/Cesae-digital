@@ -6,36 +6,38 @@
 //
 
 import SwiftUI
-
 struct PokemonListView: View {
     
-    //Usar umas lista temporaria de pokemons
-    //let AllPokemon = ["Bulbasaur", "Charmander", "Squirtle", "Pikachu", "Eevee"]
-    
+    // ViewModel da lista
     @State private var ViewModel = PokemonViewModel()
-    
+    // ViewModel dos favoritos
     @Bindable var favoritesVM: FavoritesViewModel
     
-    //Texto que o utilizador tem que colocar
+    // Texto da search bar
     @State private var searchText = ""
     
-    //Filtro da lista - Atualiza sempre que a variavel searchText muda
-    
+    // Filtra lista conforme searchText
     var filteredPokemon: [Pokemon] {
         if searchText.isEmpty {
             return ViewModel.AllPokemon
-        }else {
+        } else {
             return ViewModel.AllPokemon.filter{ $0.name.localizedCaseInsensitiveContains(searchText) }
         }
     }
     
-    var body: some View {        
+    var body: some View {
         NavigationStack{
-            List (filteredPokemon) {
-                pokemon in
+            List(filteredPokemon) { pokemon in
+                // Navega para o detalhe
                 NavigationLink(destination: PokemonDetailView(favoriteVM: favoritesVM, pokemon: pokemon)){
-                    Text(pokemon.name)
+                    HStack {
+                        // Número do Pokédex
+                        Text(String(format: "#%03d", pokemon.pokedexId))
+                            .foregroundColor(.gray)
+                        Text(pokemon.name.capitalized)
+                    }
                 }
+                // Swipe para favoritar/desfavoritar
                 .swipeActions {
                     Button {
                         favoritesVM.toggleFavorito(pokemon: pokemon)
@@ -50,7 +52,8 @@ struct PokemonListView: View {
             }
             .searchable(text: $searchText, prompt: "Procurar Pokemon")
             .navigationTitle("Pokedex")
-            .task { // task para fazer correr um codigo quando a view aparecer
+            // Carrega Pokémon ao abrir
+            .task {
                 await ViewModel.buscarPokemonAPI()
             }
         }

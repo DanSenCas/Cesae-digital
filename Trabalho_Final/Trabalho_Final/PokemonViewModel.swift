@@ -10,33 +10,29 @@ import Foundation
 @Observable
 class PokemonViewModel {
     
-    //Array list que guarda o modelo pokemon
+    // Lista de todos os Pokémon
     var AllPokemon: [Pokemon] = []
     
-    //Funçao async para esperart pela resposta da internet
-    func buscarPokemonAPI() async{
-        //Objectivo ir buscar os dados e guardar na lista
+    // Vai buscar 151 Pokémon à API
+    func buscarPokemonAPI() async {
         
-        
-        //guard para o caso de o url estiver errado ou com algum erro
+        // Valida o URL
         guard let BDPokemon = URL(string: "https://pokeapi.co/api/v2/pokemon?limit=151") else { return }
         
-        //Try catch para ver se lida com os erros na api
-        //(Resultado)Try catch para guardar o resultado em uma nova variavel
-        do{
-            let (dados, resposta) = try await URLSession.shared.data(from: BDPokemon)
+        do {
+            // Chamada à API
+            let (dados, _) = try await URLSession.shared.data(from: BDPokemon)
+            // Decode do JSON
             let resultado = try JSONDecoder().decode(PokemonListResponse.self, from: dados)
             
-            //Para cada resultado, vai criar um pokemon porque falta um id criado por nos (.map serve como um for loop)
+            // Converte resultados em Pokemon - extrai id do URL
             AllPokemon = resultado.results.map { item in
-                Pokemon(name: item.name)
+                let id = Int(item.url.split(separator: "/").last ?? "0") ?? 0
+                return Pokemon(name: item.name, pokedexId: id)
             }
-            
             
         } catch {
             print("Erro: \(error)")
         }
-        
     }
-    
 }

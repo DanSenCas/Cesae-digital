@@ -10,19 +10,22 @@ import Foundation
 @Observable
 class PokemonDetailViewModel {
     
-    //Variavel para guardar os detalhes
+    // Detalhes do Pokémon selecionado
     var detalhe: PokemonDetail?
     
-    //Funçao para ir buscar os detalhes a dita API
-    func buscarDetalhe(name:String) async{
+    // Vai buscar detalhes pelo nome
+    func buscarDetalhe(name: String) async {
         
+        // Valida o URL com o nome do Pokémon
         guard let BDPokemonDetalhes = URL(string: "https://pokeapi.co/api/v2/pokemon/\(name)") else { return }
         
-        do{
-            let (dados, resposta) = try await URLSession.shared.data(from: BDPokemonDetalhes)
+        do {
+            // Chamada à API
+            let (dados, _) = try await URLSession.shared.data(from: BDPokemonDetalhes)
+            // Decode para PokemonDetail
             detalhe = try JSONDecoder().decode(PokemonDetail.self, from: dados)
             
-        }catch{
+        } catch {
             print("Erro: \(error)")
         }
     }
